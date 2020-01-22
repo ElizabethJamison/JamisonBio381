@@ -8,7 +8,7 @@ output:
     theme: spacelab
 ---
 
-
+![](LabProfile_Jamison.jpg)
 
 
 ## Homework 1
