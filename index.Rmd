@@ -8,8 +8,7 @@ output:
     theme: spacelab
 ---
 
-![](LabProfile_Jamison.jpg)
-
+<img src="LabProfile_Jamison.jpg" width="260" height="200" />
 
 ## Homework 1
 [Typora Document](Lab1_Assignment.html)
