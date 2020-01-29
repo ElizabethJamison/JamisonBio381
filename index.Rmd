@@ -13,5 +13,8 @@ output:
 ## Homework 1
 [Typora Document](Lab1_Assignment.html)
 
+## Homework 4
+[Regular Expressions Puzzles](Homework_3.html)
+
 
 

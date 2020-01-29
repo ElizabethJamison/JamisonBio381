@@ -1,0 +1,97 @@
+---
+title: 'Homework 4: Regular Expressions'
+author: "Elizabeth Jamison"
+date: "1/29/2020"
+output: html_document
+---
+
+### Step 1:
+Copy the given lines of text into Notepad ++.
+Now, using a single regular expression, transform these lines into what we need for a proper .csv file.   
+
+#### Solution:
+
+```
+FIND:\t+
+REPLACE:,
+
+```
+EXPLANATION: This code finds any number of tabs and replaces them with a comma.
+
+
+### Step 2:
+Reformat a conflict list.   
+
+#### Solution:
+
+```
+FIND:(\w+),\s*(\w+)+,\s*(.*)
+REPLACE:\2 \1 \(\3\)
+
+```
+EXPLANATION: The "find" code assigns the last name as the first capture, the first name as the second capture, and the institution as the third capture since the (.*) includes everything up to the line break. It also accounts for necessary spaces and commas. The "replace" code switches the order of the names by moving the captures, removes commas, and adds parentheses around the third capture (institution).
+
+
+### Step 3:
+Write a regular expression to place each file name on its own line.   
+
+#### Solution:
+
+```
+FIND:.mp3 
+REPLACE:.mp3\n
+
+```
+EXPLANATION: This code replaces the space after each ".mp3" with a line break which puts each file on its own line.
+
+
+### Step 4:
+Write a regular expression to grab the four digit number and put it at the end of the titles from step 3.   
+
+#### Solution:
+
+```
+FIND:(\w{4}) (.*)(.mp3)
+REPLACE:\2_\1(\3)
+
+```
+EXPLANATION: The "find" code assigns the four digit number as the first capture by specifying the length of the string of word characters, assigns everything after the first space up to the ".mpg" as the second capture, and ".mpg" as the third character. The "replace" code moves the title to the front, adds an underscore between the title and the four digit number, and keeps ".mpg" last.
+
+
+### Step 5:
+Write a single regular expression to rearrange the data set.   
+
+#### Solution:
+
+```
+FIND:(\w)(.*),(\w+),.*,
+REPLACE:\1_\3,
+
+```
+EXPLANATION: The "find" code identifies the first letter of the genus as the first capture, the remaining letters in the genus as the second capture, and the species name as the third capture. The "replace" code removes all letters in the genus except for the first letter by not including the second capture, adds an underscore, keeps the third capture (species name), and removes the decimal number by not including it. My code leaves the whole number alone which remains attached.
+
+
+### Step 6:
+Beginning with the original data set from step 5, rearrange it to abbreviate the species name a different way.   
+
+#### Solution:
+
+```
+FIND:(\w)(.*),(\w{4})(.*),.*,
+REPLACE:\1_\3,
+
+```
+EXPLANATION: The "find" code is assigning the first letter of the genus as the first capture, the remaining characters in the genus as the second capture, the first four letters of the species as the third capture, and the remaining species letters as the last capture. The ,.*, accounts for the rest of the characters up to the comma before the final number. The "replace" code is taking the first letter of the genus (1st capture), adding an underscore, taking the first four letters of the species (3rd capture), adding a comma, and keeping the last number.
+
+
+### Step 7:
+Beginning with the original data set from step 5, rearrange it so that the species and genus names are fused with the first 3 letters of each, followed by the two columns of numerical data in reversed order.   
+
+#### Solution:
+
+```
+FIND:(\w{3})(.*),(\w{3})(.*),(.*),(.*)
+REPLACE:\1\3, \6, \5
+
+```
+EXPLANATION: The "find" code is assigning the first three letters of the genus to the first capture, the first three letters of the species to the third capture, the decimal number to the fifth capture, and the whole number to the sixth capture. The "replace" code places these desired captures in the correct order and adds commas and spaces where appropriate.
