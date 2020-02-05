@@ -13,8 +13,9 @@ output:
 ## Homework 1
 [Typora Document](Lab1_Assignment.html)
 
-## Homework 4
+## Homework 3
 [Regular Expressions Puzzles](Homework_3.html)
 
-
+## Homework 4
+[Vectors in R](Homework_4.html)
 

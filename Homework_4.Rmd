@@ -1,0 +1,114 @@
+---
+title: "Homework 4"
+author: "Elizabeth Jamison"
+date: "2/5/2020"
+output: html_document
+---
+
+## Question 1
+
+Assign variables to their values:
+
+```{r}
+x <- 1.1
+a <- 2.2
+b <- 3.3
+```
+
+Assign an expression and store as z:
+
+```{r}
+z <- x^a^b 
+z <- (x^a)^b
+z <- 3*x^3 + 2*x^2 + 1
+print(z)
+```
+
+
+## Question 2
+
+Use the rep() and seq() functions to create these vectors:
+
+```{r}
+vec_a <- c(seq(from = 1, to = 8, by = 1), seq(from = 7, to = 1, by = -1))
+print(vec_a)
+
+vec_b <- c(1, rep.int(2, 2), rep.int(3,3), rep.int(4, 4), rep.int(5, 5))
+print(vec_b)
+
+vec_c <- c(5, rep.int(4, 2), rep.int(3,3), rep.int(2, 4), rep.int(1, 5))
+print(vec_c)
+```
+
+## Question 3
+
+Create a vector of 2 random uniform numbers:
+
+```{r}
+coord <- runif(2)
+print(coord)
+```
+
+Convert these numbers into polar coordinates:
+
+```{r}
+r <- sqrt((coord[1])^2+(coord[2])^2)
+print(r)
+
+theta <- atan(coord[2]/coord[1])
+print(theta)
+
+pcord <- c(r,theta)
+print(pcord)
+
+```
+
+## Question 4
+
+Create initial vector:
+
+```{r}
+queue <- c("sheep", "fox", "owl", "ant")
+print(queue)
+```
+
+Updating queue:
+
+```{r}
+queue_a <- c(queue, "serpent")
+print(queue_a)
+
+queue_b <- queue_a[-1]
+print(queue_b)
+
+queue_c <- c("donkey", queue_b)
+print(queue_c)
+
+queue_d <- queue_c[-5]
+print(queue_d)
+
+queue_e <- c(queue_d[-3])
+print(queue_e)
+
+queue_f <- c(queue_e[1:2], "aphid", queue_e[3])
+print(queue_f)
+
+which(queue_f == "aphid") # determin position of aphid
+
+```
+
+## Question 5
+
+Create a vector of all of the integers from 1 to 100 that are not divisible by 2, 3, or 7
+
+```{r}
+vec <- Filter(function(i) 
+  { all(i %% c(2,3,7) != 0) }, 
+  seq(100))
+print(vec)
+```
+
+
+
+
+
