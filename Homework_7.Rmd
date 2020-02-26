@@ -1,0 +1,160 @@
+---
+title: "Homework 7"
+author: "Elizabeth Jamison"
+date: "2/26/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Creating Fake Data Sets To Explore Hypotheses
+
+#### Call Packages
+
+```{r}
+library(ggplot2)
+```
+
+#### 1. Go back to your “thinking on paper” exercise, and decide on a pattern that you might expect in your experiment if a specific hypothesis were true.
+
+I expect southern pine beetle (SPB) infested pitch pine stands to have a higher basal area per hectare than uninfested pitch pine stands. This is because dense, overstocked stands (which generally have higher basal areas) are likely more susceptible to SPB because (1) trees are stressed, (2) trees are more apparent and numerous for SPB colonization, and (3) SPB pheromonal communication is more effective in closed canopy conditions.
+
+#### 2. To start simply, assume that the data in each of your treatment groups follow a normal distribution. Specify the sample sizes, means, and variances for each group that would be reasonable if your hypothesis were true.
+
+These parameters are estimated from data collected from infested and uninfested stands on Long Island in 2019-
+
+Infested: n = 20, mean = 35, sd = 5
+
+Uninfested: n = 20, mean = 20, sd = 5
+
+#### 3. Using the methods we have covered in class, write code to create a random data set that has these attributes. Organize these data into a data frame or tibble with the appropriate structure.
+
+```{r}
+# Creating data
+
+inf <- rnorm(n = 20, mean = 35, sd = 5) # basal areas of infested stands
+uninf <- rnorm(n = 20, mean = 20, sd = 5) # basal areas of uninfested stands
+data <- c(inf, uninf) # combining uninfested and infested data
+
+# Setting up data frame
+
+n <- c(20, 20) # number of infested and uninfested stands
+type <- c("Inf", "Unif") # specifying type (infested or uninfested)
+
+df <- data.frame(rep(type, n),data)
+names(df) <- list("Type", "BasalArea")
+head(df)
+
+```
+
+4. Now write code to analyze the data (probably as an ANOVA or regression analysis, but possibly as a logistic regression or contingency table analysis. Write code to generate a useful graph of the data.
+
+```{r}
+# ANOVA model
+ano_model <- aov(df$`BasalArea`~ df$Type, data = df)
+
+summary(ano_model)
+
+z <- summary(ano_model)
+str(z)
+
+ano_sum <- unlist(z)[9]
+print(ano_sum)
+
+# Graphing data- box plot
+
+ano_plot <- ggplot(data = df,
+                   aes(x = df$Type,
+                       y = df$BasalArea,
+                       fill = df$Type)) +
+  geom_boxplot() + 
+  labs(y= "Basal area per hectare", x = "Stand type") +
+  scale_fill_discrete(name = "Stand type", labels = c("Infested", "Uninfested"))+
+  scale_x_discrete(labels=c("Infested", "Uninfested"))
+
+print(ano_plot)
+
+```
+
+
+5. Try running your analysis multiple times to get a feeling for how variable the results are with the same parameters, but different sets of random numbers.
+
+```{r}
+# Re-generate random data
+
+inf <- rnorm(n = 20, mean = 35, sd = 5) # basal areas of infested stands
+uninf <- rnorm(n = 20, mean = 20, sd = 5) # basal areas of uninfested stands
+data <- c(inf, uninf) # combining uninfested and infested data
+df <- data.frame(rep(type, n),data)
+names(df) <- list("Type", "BasalArea")
+
+# Run model on new data
+
+ano_model <- aov(df$BasalArea~ df$Type, data = df)
+
+z <- summary(ano_model)
+
+ano_sum <- unlist(z)[9]
+print(ano_sum)
+```
+
+I continued to get significant pvalues every time I ran the ANOVA test on new randomly generated data
+
+#### 6. Now begin adjusting the means of the different groups. Given the sample sizes you have chosen, how small can the differences between the groups be (the “effect size”) for you to still detect a significant pattern (p < 0.05)?
+
+```{r}
+# Adjusting means
+inf <- rnorm(n = 20, mean = 35, sd = 5) # basal areas of infested stands
+uninf <- rnorm(n = 20, mean = 32, sd = 5) # basal areas of uninfested stands
+data <- c(inf, uninf) # combining uninfested and infested data
+df <- data.frame(rep(type, n),data)
+names(df) <- list("Type", "BasalArea")
+
+# Run model on new data
+
+ano_model <- aov(df$BasalArea~ df$Type, data = df)
+
+z <- summary(ano_model)
+
+ano_sum <- unlist(z)[9]
+print(ano_sum)
+```
+
+With a mean basal area of 35 m^2/hectare for the infested group and a mean basal area of 32 m^2/hectare for the uninfested group, p-values were rarely significant. However, with a mean basal area of 35 m^2/hectare for the infested group and a mean basal area of 31 m^2/hectare for the uninfested group, I was still obtaining significant p-values. P-values fluctuated greatly as different random data were generated, even when using the same distributions.
+
+
+#### 7. Alternatively, for the effect sizes you originally hypothesized, what is the minimum sample size you would need in order to detect a statistically significant effect? Again, run the model a few times with the same parameter set to get a feeling for the effect of random variation in the data.
+
+```{r}
+# Adjusting sample sizes
+n <- c(2, 2) # number of infested and uninfested stands
+
+inf <- rnorm(n = n[1], mean = 35, sd = 5) # basal areas of infested stands
+uninf <- rnorm(n = n[2], mean = 25, sd = 5) # basal areas of uninfested stands
+data <- c(inf, uninf) # combining uninfested and infested data
+
+
+type <- c("Inf", "Unif") # specifying type (infested or uninfested)
+
+df <- data.frame(rep(type, n),data)
+names(df) <- list("Type", "BasalArea")
+
+
+# Run model on new data
+
+ano_model <- aov(df$BasalArea~ df$Type, data = df)
+
+z <- summary(ano_model)
+
+ano_sum <- unlist(z)[9]
+print(ano_sum)
+```
+
+With a mean basal area of 35 m^2/hectare for infested stands and a mean basal area of 25 m^2/hectare for uninfested stands, I was still obtaining significant p-values for sample sizes of 5 stands for each stand type although not on every trial. Increasing n for infested stands to 10 stands and keeping n=5 for the uninfested stands caused significant p-values to occur more frequently. Sample sizes of 2 for both stand types made significant p-values rare.
+
+
+8. Write up your results in a markdown file, organized with headers and different code chunks to show your analysis. Be explicit in your explanation and justification for sample sizes, means, and variances.
+
+
+
+9. If you have time, try repeating this exercise with one of the more sophisticated distributions, such as the gamma or negative binomial (depending on the kind of data you have). You will have to spend some time figuring out by trial and error the parameter values you will need to generate appropriate means and variances of the different groups.

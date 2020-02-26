@@ -25,4 +25,6 @@ output:
 ## Homework 6
 [Simulating and Fitting Data Distributions](Homework_6.html)
 
+## Homework 7
+[Creating Fake Data Sets To Explore Hypotheses](Homework_7.html)
 
