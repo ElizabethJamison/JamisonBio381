@@ -28,3 +28,6 @@ output:
 ## Homework 7
 [Creating Fake Data Sets To Explore Hypotheses](Homework_7.html)
 
+## Homework 8
+[Data mMnipulations Using the dplyr Package](Homework_8.html)
+
