@@ -29,5 +29,8 @@ output:
 [Creating Fake Data Sets To Explore Hypotheses](Homework_7.html)
 
 ## Homework 8
-[Data mMnipulations Using the dplyr Package](Homework_8.html)
+[Data Manipulations Using the dplyr Package](Homework_8.html)
+
+## Homework 9
+[Organizing Code With Structured Programming](Homework_9.html)
 

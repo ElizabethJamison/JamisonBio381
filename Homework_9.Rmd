@@ -1,0 +1,201 @@
+---
+title: "Homework 9"
+author: "Elizabeth Jamison"
+date: "3/25/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+### Organizing Code With Structured Programming
+
+#### Question 1
+
+Use the code that you worked on in Homework #7 (creating fake data sets) , and re-organize it following the principles of structured programming. Do all the work in a single chunk in your R markdown file, just as if you were writing a single R script. Start with all of your annotated functions, preliminary calls, and global variables. The program body should be only a few lines of code that call the appropriate functions and run them in the correct order. Make sure that the output from one function serves as the input to the next. You can either daisy-chain the functions or write separate lines of code to hold elements in temporary variables and pass the along.
+
+#### Question 2
+
+Once your code is up and working, modify your program do something else: record a new summary variable, code a new statistical analysis, or create a different set of random variables or output graph. Do not rewrite any of your existing functions. Instead, copy them, rename them, and then modify them to do new things. Once your new functions are written, add some more lines of program code, calling a mixture of your previous functions and your new functions to get te job done.
+
+#### Question 3
+
+Optional. If time permits and you have the skills, try putting your program inside of a for loop and repeat the analysis with a different stochastic data set (each time you call a function that invokes the random number generator, it will create a new set of data for you to process). Can you create a data structure to store the summary statistics created in each pass through the loop? If not, your program will work, but it will only show the results from the final replicate (the previous results will be written over each time you traverse the loop)
+
+#### Load Libraries
+
+```{r}
+# load libraries ---------------------------------
+library(ggplot2)
+```
+
+#### Functions
+
+```{r}
+# ------------------------------------------------
+# FUNCTION get_BAdata
+# Description: generates fake basal areas (m^2/ha) for infested and uninfested stands
+# Inputs: none
+# Outputs: data frame containing basal areas for 20 infested and 20 uninfested stands
+##################################################
+get_BAdata <- function(){
+
+  inf <- rnorm(n = 20, mean = 35, sd = 5) # basal areas of infested stands
+  uninf <- rnorm(n = 20, mean = 20, sd = 5) # basal areas of uninfested stands
+  data <- c(inf, uninf) # combining uninfested and infested data
+  
+  # Setting up data frame
+  
+  n <- c(20, 20) # number of infested and uninfested stands
+  type <- c("Inf", "Unif") # specifying type (infested or uninfested)
+  
+  df <- data.frame(rep(type, n),data)
+  names(df) <- list("Type", "BasalArea")
+
+  return(df)
+
+} # end of get_BAdata
+#-------------------------------------------------
+#get_BAdata()
+
+# ------------------------------------------------
+# FUNCTION get_TPHAdata
+# Description: generates fake tree per ha data from infested and uninfested stands
+# Inputs: none
+# Outputs: data frame containing tree/ha data for 20 infested and 20 uninfested stands
+##################################################
+get_TPHAdata <- function(){
+
+  inf <- rnorm(n = 20, mean = 800, sd = 100) # trees/ha for infested stands
+  uninf <- rnorm(n = 20, mean = 530, sd = 100) # trees/ha for uninfested stands
+  data <- c(inf, uninf) # combining uninfested and infested data
+  
+  # Setting up data frame
+  
+  n <- c(20, 20) # number of infested and uninfested stands
+  type <- c("Inf", "Unif") # specifying type (infested or uninfested)
+  
+  df <- data.frame(rep(type, n),data)
+  names(df) <- list("Type", "TPHA")
+
+  return(df)
+
+} # end of getTPHA_data
+#-------------------------------------------------
+#get_TPHAdata()
+
+# ------------------------------------------------
+# FUNCTION calculate_stuff
+# Description: fits ANOVA model
+# Inputs: numeric x and y vectors
+# Outputs: entire model summary from aov
+##################################################
+calculate_stuff <- function(x_var = runif(40),
+                            y_var = runif(40)) {
+
+  df <- data.frame(x_var, y_var)
+
+  ano_model <- aov(y_var ~ x_var, data = df)
+
+  return(summary(ano_model))
+
+} # end of calculate_stuff
+#-------------------------------------------------
+#calculate_stuff()
+
+# ------------------------------------------------
+# FUNCTION summarize_results
+# Description: pull elements from model summary
+# Inputs: summary call
+# Outputs: vector of p values
+##################################################
+summarize_results <- function(z = NULL) {
+
+  ano_sum <- unlist(z)[9]
+
+  return(ano_sum)
+
+} # end of summarize_results
+#-------------------------------------------------
+#summarize_results()
+
+# ------------------------------------------------
+# FUNCTION graph_BAresults
+# Description: graph basal area data
+# Inputs: numeric x and y vectors
+# Outputs: creates graph
+##################################################
+graph_BAresults <- function(x_var = runif(40), y_var = runif(40)) {
+
+  df <- data.frame(x_var, y_var)
+  ano_plot <- ggplot(data = df, 
+                   aes(x = x_var,
+                       y = y_var,
+                       fill = x_var)) +
+  geom_boxplot() + 
+  labs(y= "Basal area per hectare", x = "Stand type") +
+  scale_fill_discrete(name = "Stand type", labels = c("Infested", "Uninfested"))+
+  scale_x_discrete(labels=c("Infested", "Uninfested"))
+  
+  return(ano_plot)
+
+} # end of graph_results
+#-------------------------------------------------
+#graph_BAresults()
+
+# ------------------------------------------------
+# FUNCTION graph_TPHAresults
+# Description: graph trees/ha data
+# Inputs: numeric x and y vectors
+# Outputs: creates graph
+##################################################
+graph_TPHAresults <- function(x_var = runif(40), y_var = runif(40)) {
+
+  df <- data.frame(x_var, y_var)
+  ano_plot <- ggplot(data = df, 
+                   aes(x = x_var,
+                       y = y_var,
+                       fill = x_var)) +
+  geom_boxplot() + 
+  labs(y= "Trees per hectare", x = "Stand type") +
+  scale_fill_discrete(name = "Stand type", labels = c("Infested", "Uninfested"))+
+  scale_x_discrete(labels=c("Infested", "Uninfested"))
+  
+  return(ano_plot)
+
+} # end of graph_TPHAresults
+#-------------------------------------------------
+#graph_TPHAresults()
+
+```
+
+#### Program
+
+For question 2, I created a new random variable: number of trees per hectare. I added a new function, get_TPHAdata(), that generates fake trees/ha data from 20 infested and 20 uninfested stands. If I specify that I want to assess trees/ha data in my program, the program runs using trees/ha data. Additionally, I created a new function, graph_TPHAresults(), that will graph the trees/ha data.
+
+```{r}
+# GENERATE BASAL AREA DATA:
+BA_data <- get_BAdata()
+x <- BA_data[,1]
+y <- BA_data[,2]
+
+# GENERATE TREES PER HA DATA:
+TPHA_data <- get_TPHAdata()
+x <- TPHA_data[,1]
+y <- TPHA_data[,2]
+
+# create ANOVA model
+step1 <- calculate_stuff(x_var = x, y_var = y)
+print(step1)
+
+# extract p-value
+step2 <- summarize_results(z = step1)
+print(step2)
+
+# GRAPH BA RESULTS:
+graph_BAresults(x_var = x, y_var = y)
+
+# GRAPH TREES PER HA RESULTS:
+graph_TPHAresults(x_var = x, y_var = y)
+
+
+```
+

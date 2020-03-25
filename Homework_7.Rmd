@@ -64,9 +64,7 @@ print(ano_sum)
 # Graphing data- box plot
 
 ano_plot <- ggplot(data = df,
-                   aes(x = df$Type,
-                       y = df$BasalArea,
-                       fill = df$Type)) +
+                   aes(x = df$Type, y = df$BasalArea, fill = df$Type)) +
   geom_boxplot() + 
   labs(y= "Basal area per hectare", x = "Stand type") +
   scale_fill_discrete(name = "Stand type", labels = c("Infested", "Uninfested"))+
