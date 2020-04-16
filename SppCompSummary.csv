@@ -1,0 +1,5 @@
+# Summary stats forbatch processing of t-tests
+# timestamp: 2020-04-16 11:32:37
+"ID","file_name","p_val"
+1,"StandComp_EJ_2019.csv",5.79297763321271e-06
+2,"StandComp_MH_2016.csv",0.00010844469879469

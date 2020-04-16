@@ -1,0 +1,266 @@
+---
+title: "Homework_10_work"
+author: "Elizabeth Jamison"
+date: "4/15/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+```{r}
+# ------------------------------------------------
+# FUNCTION num_zeros
+# Description: calculates the number of zeros in a numeric vector
+# Inputs: numeric vector
+# Outputs: "counter" which counts the number of zeros in the numeric vector
+##################################################
+num_zeros <- function(numeric_vec = c(0,1,2,3,4,5)) {
+  for (i in 1:length(numeric_vec)) { # start of for loop
+    if(numeric_vec[i] == 0) { # start of if statement
+      counter <- counter + 1
+    } # end of if statement
+  } # end of for loop
+
+return(counter)
+
+} # end of num_zeros
+#-------------------------------------------------
+
+# testing num_zeros
+num_zeros() # default
+
+vec1 <- sample(0:10, 20, replace = TRUE)
+print(vec1)
+num_zeros(vec1)
+
+```
+
+
+2. Use subsetting instead of a loop to rewrite the function as a single line of code.
+
+```{r}
+# ------------------------------------------------
+# FUNCTION num_zeros_sub
+# Description: counts the number of zeros in a numeric vector using subsetting
+# Inputs: numeric vector
+# Outputs: "counter" which counts the number of zeros in the numeric vector
+##################################################
+num_zeros_sub <- function(numeric_vec = c(0,1,2,3,4,5)) {
+  
+  counter <- length(numeric_vec[numeric_vec == 0]) 
+  
+  return(counter)
+
+} # end of num_zeros_sub
+#-------------------------------------------------
+
+# testing num_zeros_sub
+num_zeros_sub() # default
+
+vec1 <- sample(0:10, 20, replace = TRUE)
+print(vec1)
+num_zeros(vec1)
+
+```
+
+
+3. Write a function that takes as input two integers representing the number of rows and columns in a matrix. The output is a matrix of these dimensions in which each element is the product of the row number x the column number.
+
+```{r}
+mat1_nrow <- 4
+mat1_ncol <- 5
+mat1 <- matrix(nrow = mat1_nrow, 
+               ncol = mat1_ncol, 
+               data = sample(0:10, mat1_nrow*mat1_ncol, replace = TRUE))
+print(mat1)
+
+# ------------------------------------------------
+# FUNCTION prod_matrix
+# Description: creates a matrix in which each element is a product of the row number and column number
+# Inputs: two integers representing the number of rows and columns in the matrix
+# Outputs: matrix with dimensions corresponding to the integers
+##################################################
+prod_matrix <- function(num_row = 5, num_col = 4) {
+  mat1 <- matrix(nrow = num_row, ncol = num_col)
+  for (i in 1:num_row) { # start of outer loop
+    for (j in 1:num_col) { # start of inner loop
+      mat1[i,j] <- i*j
+    } # end of inner loop
+  } # end of outer loop
+
+return(mat1)
+
+} # end of prod_matrix
+#-------------------------------------------------
+
+# testing prod_matrix
+
+prod_matrix()
+
+prod_matrix(num_row = 6, num_col = 7)
+
+```
+
+
+4. Use the code from the upcoming April 2nd lecture (Randomization Tests) to design and conduct a randomization test for some of your own data. You will need to modify the functions that read in the data, calculate the metric, and randomize the data. Once those are set up, the program should run correctly calling your new functions. Also, to make your analysis fully repeatable, make sure you set the random number seed at the beginning (use either set.seed() in base R, or char2seed in the TeachingDemos package
+
+The data I choose to use are the number of trees/hectare for 49 pitch pine barren stands. 40 of these stands are infested with southern pine beetle and 9 of these stands are uninfested. ID = stand number, x = status (infested or uninfested), y = number of trees/hectare (TPHA).
+
+```{r}
+# Preliminaties -----------------------------------------------------------
+
+library(ggplot2)
+require(ggplot2)
+library(TeachingDemos)
+require(TeachingDemos)
+
+set.seed(100)
+
+z <- read.csv("C:/Users/eliza/Desktop/JamisonBio381/TPHAdata_RandomizationTest_HW10.csv")
+print(z)
+
+# Building functions ------------------------------------------------------
+
+# ------------------------------------------------
+# FUNCTION read_data
+# Description: read in (or generate) data set for analysis
+# Inputs: file name (or nothing, as in this demo)
+# Outputs: 3 column data frame of observed data (ID, x, y)
+##################################################
+read_data <- function(z = NULL) {
+  if (is.null(z)) {
+    x_obs <- 1:20
+    y_obs <- x_obs + 10*rnorm(20)
+    df <- data.frame(ID=seq_along(x_obs),
+                     x_obs,
+                     y_obs)
+  }
+  
+  df <- read.table(file = z,
+                   header = TRUE,
+                   sep = ",",
+                   stringsAsFactors = FALSE)
+  
+return(df)
+
+} # end of read_data
+#-------------------------------------------------
+#read_data()
+
+# ------------------------------------------------
+# FUNCTION get_metric
+# Description: calculate metric for randomization test
+# Inputs: 2-column data frame
+# Outputs: difference in means between two groups
+##################################################
+get_metric <- function(z = NULL) {
+  if(is.null(z)) {
+    x <- c(rep("INF", 10), rep("UN", 10))
+    y <- 10*rnorm(20)
+    z <- data.frame(ID = seq_along(x_obs),
+                    x,
+                    y)
+  }
+ 
+  diff_mean <- abs(mean(z[z$x == "INF",3]) - mean(z[z$x == "UN", 3]))
+
+  return(diff_mean)
+
+} # end of get_metric
+#-------------------------------------------------
+get_metric()
+
+# ------------------------------------------------
+# FUNCTION shuffle_data
+# Description: randomize data for a regression analysis
+# Inputs: 3 column data frame (ID, xvar, yvar)
+# Outputs: 3 column data frame(ID, xvar, yvar)
+##################################################
+shuffle_data <- function(z = NULL){
+  if(is.null(z)) {
+    x_obs <- c(rep("a", 10), rep("b", 10))
+    y_obs <- 10*rnorm(20)
+    z <- data.frame(ID = seq_along(x_obs),
+                    x_obs,
+                    y_obs)
+  }
+  
+  z[,3] <- sample(z[,3])
+  print(z)
+
+return(z)
+
+} # end of shuffle_data
+#-------------------------------------------------
+#shuffle_data()
+
+# ------------------------------------------------
+# FUNCTION get_pval
+# Description: calculate p value from simulation
+# Inputs: list of observed metric and vector of simulated metrics
+# Outputs: lower and upper tail probability values
+##################################################
+get_pval <- function(z = NULL) {
+  if(is.null(z)) {
+    z <- list(rnorm(1), rnorm(1000)) # z[[2]] contains 1000 simulated slopes
+  }                                 # z[[1]] contains observed slope
+  
+  p_lower <- mean(z[[2]] <= z[[1]])
+  p_upper <- mean(z[[2]] >= z[[1]])
+  
+
+return(c(p_lower, p_upper))
+
+} # end of get_pval
+#-------------------------------------------------
+get_pval()
+
+# ------------------------------------------------
+# FUNCTION plot_ran_test
+# Description: create a ggplot of histogram of simulated values
+# Inputs: list of observed metrics and vector simulated metrics
+# Outputs: saved ggplot graph
+##################################################
+plot_ran_test <- function(z = NULL) {
+  if (is.null(z)) {
+    z <- list(rnorm(1), rnorm(1000))
+  }
+  
+  df <- data.frame(ID = seq_along(z[[2]]), sim_x = z[[2]])
+  p1 <- ggplot(data = df, mapping = aes(x = sim_x))
+  p1 + geom_histogram(mapping = aes(fill = I("yellow"), color = I("black"))) +
+    geom_vline(aes(xintercept = z[[1]], col="blue"))
+  print(p1)
+
+
+return(p1 + geom_histogram(mapping = aes(fill = I("yellow"), color = I("black"))) +
+         geom_vline(aes(xintercept = z[[1]], col="blue")))
+
+} # end of plot_ran_test
+#-------------------------------------------------
+plot_ran_test()
+
+# --------------------------------------------------
+
+# Assembling functions ---------------------------------
+
+n_sim <- 1000 # number of simulated data sets
+x_sim <- rep(NA, n_sim) # set up empty vector for simulated difference between means
+
+z <- read_data("TPHAdata_RandomizationTest_HW10.csv") # get data
+print(z)
+
+
+x_obs <- get_metric(z)
+print(x_obs)
+
+for (i in seq_len(n_sim)) {
+  x_sim[i] <- get_metric(shuffle_data(df)) # run simulation
+}
+print(x_sim)
+
+diff_means <- list(x_obs, x_sim)
+get_pval(diff_means)
+plot_ran_test(diff_means)
+```
+

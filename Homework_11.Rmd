@@ -1,0 +1,93 @@
+---
+title: "Homework 11"
+author: "Elizabeth Jamison"
+date: "4/13/2020"
+output: html_document
+editor_options: 
+  chunk_output_type: console
+---
+
+## Batch Processing
+
+1. Repeat the exercise from the Batch Processing Lecture (7th April), but do it using real data sets rather than purely simulated. Check with folks in your lab to see if there are multiple data sets available for analysis. Stick to simple data analyses and graphics, but try to set it up as a batch process that will work on multiple files and save summary results to a common file.
+
+The data used in this assignment is stand type (TYPE) and proportion pitch pine (PROP_PIRI) for pine barren ecosystems on Long Island. Data sets include data collected by me in 2019 and data collected by a previous graduate student in my lab in 2016.
+
+```{r}
+# ------------------------------------------------
+# FUNCTION t_test
+# Description: runs a t test, extracts model results
+# Inputs: 2 column data frame (x and y)
+# Outputs: p-value
+##################################################
+t_test <- function(df = NULL) {
+    
+  if(is.null(df)) {
+    x_var <- c(rep("a", 5), rep("b", 5))
+    y_var <- runif(10)
+    df <- data.frame(x_var,y_var)
+  }
+
+  pval <- t.test(data = df, df[,2] ~ df[,1])$p.value
+
+  return(pval)
+
+} # end of t_test
+#-------------------------------------------------
+library(TeachingDemos)
+
+# Global variables
+file_folder <- "StandCompData/"
+file_out <- "SppCompSummary.csv"
+###############################################################
+
+#file_builder
+file_names <- list.files(path = file_folder)
+dir.create(file_folder)
+
+# Create a data frame to hold summary file statistics
+file_names <- list.files(path = file_folder)
+ID <- seq_along(file_names)
+file_name <- file_names
+p_val <- rep(NA, length(file_names))
+
+stats_out <- data.frame(ID, file_name, p_val)
+
+
+# batch process by looping through individiuals
+
+for (i in seq_along(file_names)) {
+  data <- read.table(file = paste(file_folder, file_names[i], sep = ""),
+                                  sep = ",",
+                                  header = TRUE) # referring to read.table
+  d_clean <- data[complete.cases(data),] # sebset for clean cases
+  . <- t_test(df = d_clean)
+  stats_out[i,3] <- . 
+
+}
+print(d_clean)
+print(stats_out)
+
+# set up an output file and incorporate time stamp and minimal metadata
+
+write.table(cat("# Summary stats for",
+                "batch processing of t-tests",
+                "\n",
+                "# timestamp: ", as.character(Sys.time()),
+                "\n",
+                file = file_out, 
+                row.names = "",
+                col.names = "",
+                sep = ""))
+
+# now add the data frame
+write.table(x = stats_out,
+            file = file_out,
+            row.names = FALSE,
+            col.names = TRUE,
+            sep = ",",
+            append = TRUE)
+
+
+```
+

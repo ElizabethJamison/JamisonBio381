@@ -34,3 +34,9 @@ output:
 ## Homework 9
 [Organizing Code With Structured Programming](Homework_9.html)
 
+## Homework 10
+[For Loops and Randomization Tests](Homework_10.html)
+
+## Homework 11
+[Batch Processing](Homework_11.html)
+
